@@ -7,6 +7,7 @@ import com.betrybe.agrix.models.entity.Farm;
 import com.betrybe.agrix.service.CropService;
 import com.betrybe.agrix.service.FarmService;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,9 +65,6 @@ public class FarmController {
   @PostMapping("/{id}/crops")
   public ResponseEntity<?> createCrop(@PathVariable Long id, @RequestBody Crop crop) {
     Farm farm = farmService.getFarmById(id);
-    if (farm == null) {
-      return new ResponseEntity<>("Fazenda não encontrada!", HttpStatus.NOT_FOUND);
-    }
 
     crop.setFarm(farm);
     Crop savedCrop = cropService.createCrop(crop);
@@ -75,5 +73,20 @@ public class FarmController {
         savedCrop.getPlantedArea(), savedCrop.getFarm().getId());
 
     return new ResponseEntity<>(dtoCrop, HttpStatus.CREATED);
+  }
+
+  /**
+   * Get all crops from a farm.
+   */
+  @GetMapping("/{id}/crops")
+  public ResponseEntity<?> getAllCrops(@PathVariable Long id) {
+    Farm farm = farmService.getFarmById(id);
+
+    List<CropDto> dtoCrops = farm.getCrops().stream()
+        .map(crop -> new CropDto(crop.getId(), crop.getName(), crop.getPlantedArea(),
+            crop.getFarm().getId()))
+        .collect(Collectors.toList());
+
+    return new ResponseEntity<>(dtoCrops, HttpStatus.OK);
   }
 }
