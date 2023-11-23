@@ -1,39 +1,40 @@
 package com.betrybe.agrix.models.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import java.util.List;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 /**
- * Farm entity.
+ * Crop entity.
  */
 @Entity
+@Table(name = "crops")
 @Data
-public class Farm {
+public class Crop {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private String name;
-  private double size;
-  @OneToMany(mappedBy = "farm")
-  @JsonIgnore
-  private List<Crop> crops;
+  private Double plantedArea;
+  @ManyToOne
+  @JoinColumn(name = "farm_id")
+  private Farm farm;
 
-  public Farm() {
+  public Crop() {
   }
 
   /**
-   * Farm constructor.
+   * Crop constructor.
    */
-  public Farm(Long id, String name, double size) {
+  public Crop(Long id, String name, Double plantedArea) {
     this.id = id;
     this.name = name;
-    this.size = size;
+    this.plantedArea = plantedArea;
   }
 }
